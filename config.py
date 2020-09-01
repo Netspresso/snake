@@ -5,7 +5,7 @@ class Config():
     WINDOW_HEIGHT = 480
     CELLSIZE = 20
     assert WINDOW_WIDTH % CELLSIZE == 0, 'szerokość okna musi być wielokrotnością wielkości komórki'
-    assert WINDOW_HEIGHT % CELLSIZE == 0 'wysokość okna musi być wielokrotnością wielkości komórki'
+    assert WINDOW_HEIGHT % CELLSIZE == 0, 'wysokość okna musi być wielokrotnością wielkości komórki'
     CELLWIDTH = int(WINDOW_WIDTH / CELLSIZE)
     CELLHEIGHT = int(WINDOW_HEIGHT / CELLSIZE)
 

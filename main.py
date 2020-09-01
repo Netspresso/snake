@@ -1,4 +1,5 @@
 import pygame, sys
+from game import Game
 
 # stworzenie okna
 # aktualizacja logiki gry
@@ -34,32 +35,12 @@ Co jest stałą w grze?
 - częstotliwość wyświetlania klatek
 '''
 
-pygame.init()
 
-DISPLAY_SURF = pygame.display.set_mode(
-    (800, 600))  # tworzy powierzchnię (okienko gry)
-BASIC_FONT = pygame.font.Font('freesansbold.ttf', 18)
-CLOCK = pygame.time.Clock(
-)  # tworzy nowy obiekt zegara który może być użyty do śledzenia upływu czasu
-pygame.display.set_caption(
-    'Weselny Pyton')  # tworzy napis wyświetlany na górnym pasku
+def main():
+    game = Game()
+    game.run()
+    sys.exit()
 
-while True:  # Main game loop
-    for event in pygame.event.get(
-    ):  # ta funkcja bierze i usuwa wiadomości z kolejki (można w argumencie funkcji zadać typ który jako jedyny ma być obsługiwany)
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                pygame.quit()
-                sys.exit()
 
-    DISPLAY_SURF.fill(
-        (255, 255, 255)
-    )  # funkcją display utworzyłem obiekt Surface - fill to metoda dla obiektu Surface która wypełnia powierzchnię okna jednolitym kolorem
-    pygame.display.update(
-    )  # metoda która odświeża wyświetlane okno - w mojej pętli będzie odświeżana za każdym zdarzeniem
-    CLOCK.tick(
-        60
-    )  # ustala ilość cyknięć w milisekundach, w moim przypadku determinuje to że gra będzie działać w 60 klatkach na sekundę
+if __name__ == '__main__':
+    main()
