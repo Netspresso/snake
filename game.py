@@ -44,13 +44,38 @@ class Game():
         appleRect = pygame.Rect(x, y, Config.CELLSIZE, Config.CELLSIZE)
         pygame.draw.rect(self.screen, Config.RED, appleRect)
 
+    def drawScore(self, score):
+        scoreSurf = self.BASICFONT.render('Score: %s' % (score), True,
+                                          Config.WHITE)
+        scoreRect = scoreSurf.get_rect()
+        scoreRect.topleft = (Config.WINDOW_WIDTH - 120, 10)
+        self.screen.blit(scoreSurf, scoreRect)
+
     def draw(self):
         self.screen.fill(Config.BG_COLOR)
         self.drawGrid()
         self.drawSnake()
         self.drawApple()
+        self.drawScore(
+            len(self.snake.snakeCoords) - 3
+        )  # -3 bo wtedy odejmuje początkową dlugosc weza i zostaje tylko faktyczna ilość zjedzonych jablek
         pygame.display.update()
         self.clock.tick(Config.FPS)
+
+    def checkForKeyPress(self):
+        if len(pygame.event.get(pygame.QUIT)) > 0:
+            pygame.quit()
+
+        keyUpEvents = pygame.event.get(pygame.KEYUP)
+
+        if len(keyUpEvents) == 0:
+            return None
+
+        if keyUpEvents[0].key == pygame.K_ESCAPE:
+            pygame.quit()
+            quit()
+
+        return keyUpEvents[0].key
 
     def handleKeyEvents(self, event):
         if (event.key == pygame.K_LEFT or event.key
@@ -76,13 +101,21 @@ class Game():
 
         return True
 
+    def drawPressKeyMsg(self):
+        pressKeySurf = self.BASICFONT.render('Press a key to play.', True,
+                                             Config.DARKGRAY)
+        pressKeyRect = pressKeySurf.get_rect()
+        pressKeyRect.topleft = (Config.WINDOW_WIDTH - 200,
+                                Config.WINDOW_HEIGHT - 30)
+        self.screen.blit(pressKeySurf, pressKeyRect)
+
     def isGameOver(self):
         if (self.snake.snakeCoords[self.snake.HEAD]['x'] == -1
                 or self.snake.snakeCoords[self.snake.HEAD]['x']
                 == Config.CELLWIDTH
                 or self.snake.snakeCoords[self.snake.HEAD]['y'] == -1
                 or self.snake.snakeCoords[self.snake.HEAD]['y']
-                == Config.CELLWIDTH):
+                == Config.CELLHEIGHT):
             return self.resetGame()
 
         for snakeBody in self.snake.snakeCoords[1:]:
@@ -91,7 +124,32 @@ class Game():
                         self.snake.HEAD]['y']:
                 return self.resetGame()
 
+    def displayGameOver(self):
+        gameOverFont = pygame.font.Font('freesansbold.ttf', 150)
+        gameSurf = gameOverFont.render('Game', True, Config.WHITE)
+        overSurf = gameOverFont.render('Over', True, Config.WHITE)
+        gameRect = gameSurf.get_rect()
+        overRect = overSurf.get_rect()
+        gameRect.midtop = (Config.WINDOW_WIDTH / 2, 10)
+        overRect.midtop = (Config.WINDOW_WIDTH / 2, gameRect.height + 10 + 25)
+        self.screen.blit(gameSurf, gameRect)
+        self.screen.blit(overSurf, overRect)
+
+        self.drawPressKeyMsg()
+        pygame.display.update()
+        pygame.time.wait(500)
+        self.checkForKeyPress()
+        while True:
+            if self.checkForKeyPress():
+                pygame.event.get()
+                return
+
     def run(self):
+        while True:
+            self.gameLoop()
+            self.displayGameOver()
+
+    def gameLoop(self):
         while True:  # Main game loop
             for event in pygame.event.get(
             ):  # ta funkcja bierze i usuwa wiadomości z kolejki (można w argumencie funkcji zadać typ który jako jedyny ma być obsługiwany)
